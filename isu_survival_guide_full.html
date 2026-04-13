@@ -1,0 +1,708 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --red:#C8102E;--gold:#F1BE48;--red-light:#fdf0f2;--gold-light:#fffbf0;
+    --surface:var(--color-background-primary);--surface2:var(--color-background-secondary);
+    --border:var(--color-border-tertiary);--text:var(--color-text-primary);--muted:var(--color-text-secondary);
+    --radius:10px;--font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  #app{font-family:var(--font);color:var(--text);min-height:600px}
+  .nav{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:0.5px solid var(--border);background:var(--surface);flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px}
+  .logo-mark{width:30px;height:30px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:#fff}
+  .logo-text{font-size:14px;font-weight:600;letter-spacing:-0.3px}
+  .logo-sub{font-size:10px;color:var(--muted);font-family:var(--mono)}
+  .nav-links{display:flex;gap:3px;margin-left:auto;flex-wrap:wrap}
+  .nav-btn{padding:5px 11px;border-radius:6px;border:0.5px solid var(--border);background:transparent;font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;color:var(--text);transition:background .15s}
+  .nav-btn:hover{background:var(--surface2)}
+  .nav-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+  .avatar{width:26px;height:26px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#7a5800;cursor:pointer;flex-shrink:0}
+  .view{display:none;padding:18px}
+  .view.active{display:block}
+  .page-title{font-size:18px;font-weight:600;letter-spacing:-0.4px;margin-bottom:3px}
+  .page-sub{font-size:12px;color:var(--muted);margin-bottom:16px}
+  .btn{padding:7px 14px;border-radius:6px;border:0.5px solid var(--border);background:var(--surface);font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;color:var(--text)}
+  .btn:hover{background:var(--surface2)}
+  .btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+  .btn-red:hover{background:#a50025}
+  .btn-outline-red{color:var(--red);border-color:var(--red)}
+  .btn-outline-red:hover{background:var(--red-light)}
+  .search-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .search-input{flex:1;min-width:160px;padding:8px 12px;border:0.5px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:13px;background:var(--surface);color:var(--text);outline:none}
+  .search-input:focus{border-color:var(--red)}
+  .filter-select{padding:8px 10px;border:0.5px solid var(--border);border-radius:var(--radius);font-family:var(--font);font-size:12px;background:var(--surface);color:var(--text);cursor:pointer}
+  .tags-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px}
+  .tag{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .15s}
+  .tag.on,.tag:hover{background:var(--red);color:#fff;border-color:var(--red)}
+  .courses-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .course-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:border-color .15s;position:relative}
+  .course-card:hover{border-color:var(--red)}
+  .cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+  .course-code{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .course-dept{font-size:10px;padding:2px 7px;border-radius:4px;background:var(--gold-light);color:#7a5800;font-weight:500;border:0.5px solid #f1be4860}
+  .course-name{font-size:14px;font-weight:600;letter-spacing:-0.2px;margin-bottom:6px}
+  .course-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+  .c-tag{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--red-light);color:#a00020;border:0.5px solid #c8102e30}
+  .metrics{display:flex;gap:10px;padding-top:8px;border-top:0.5px solid var(--border)}
+  .metric{flex:1;text-align:center}
+  .metric-val{font-size:15px;font-weight:600;font-family:var(--mono)}
+  .metric-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
+  .diff-bar{height:3px;border-radius:2px;background:var(--surface2);margin-top:3px}
+  .diff-fill{height:100%;border-radius:2px}
+  .save-btn{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--muted);line-height:1}
+  .save-btn.saved{color:var(--gold)}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+  .stat-card{background:var(--surface2);border-radius:8px;padding:12px;text-align:center}
+  .stat-num{font-size:22px;font-weight:600;font-family:var(--mono)}
+  .stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+  /* Modal */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+  .overlay.open{display:flex}
+  .modal{background:var(--surface);border-radius:14px;width:min(580px,94vw);max-height:82vh;overflow-y:auto;border:0.5px solid var(--border)}
+  .m-head{padding:16px 18px 12px;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1}
+  .m-close{float:right;background:none;border:none;font-size:16px;cursor:pointer;color:var(--muted)}
+  .m-body{padding:18px}
+  .dm-sec{margin-bottom:18px}
+  .dm-sec-t{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:8px}
+  /* Comments */
+  .cmt{padding:10px;border:0.5px solid var(--border);border-radius:8px;margin-bottom:6px}
+  .cmt-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+  .cmt-who{font-size:10px;color:var(--muted);font-family:var(--mono)}
+  .cmt-actions{margin-left:auto;display:flex;gap:5px}
+  .cmt-btn{background:none;border:0.5px solid var(--border);border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer;color:var(--muted);font-family:var(--font)}
+  .cmt-btn:hover{border-color:var(--red);color:var(--red)}
+  .cmt-txt{font-size:12px;line-height:1.5}
+  .reply-thread{margin-top:8px;padding-left:12px;border-left:2px solid var(--border)}
+  .reply-item{font-size:11px;color:var(--muted);padding:4px 0;border-bottom:0.5px solid var(--border)}
+  .reply-item:last-child{border:none}
+  .add-cmt{width:100%;padding:9px 10px;border:0.5px solid var(--border);border-radius:8px;font-family:var(--font);font-size:12px;resize:none;background:var(--surface);color:var(--text);outline:none}
+  .add-cmt:focus{border-color:var(--red)}
+  /* Rating stars */
+  .star-row{display:flex;gap:4px;margin-bottom:10px}
+  .star{font-size:22px;cursor:pointer;color:var(--border);transition:color .1s}
+  .star.on{color:var(--gold)}
+  /* Profile */
+  .profile-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:18px;max-width:440px}
+  .profile-av{width:56px;height:56px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:#7a5800;margin-bottom:12px}
+  .field-row{margin-bottom:12px}
+  .field-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);margin-bottom:4px}
+  .field-val{font-size:13px}
+  .field-input{width:100%;padding:7px 10px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:var(--surface);color:var(--text);outline:none}
+  .field-input:focus{border-color:var(--red)}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:0.5px solid var(--border)}
+  .toggle{width:38px;height:20px;border-radius:10px;background:var(--surface2);border:0.5px solid var(--border);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+  .toggle.on{background:var(--red);border-color:var(--red)}
+  .toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .2s}
+  .toggle.on::after{left:20px}
+  /* Auth */
+  .auth-wrap{max-width:380px;margin:0 auto}
+  .auth-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:24px}
+  .auth-title{font-size:16px;font-weight:600;margin-bottom:4px}
+  .auth-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .auth-tabs{display:flex;gap:0;margin-bottom:20px;border:0.5px solid var(--border);border-radius:8px;overflow:hidden}
+  .auth-tab{flex:1;padding:8px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface2);border:none;font-family:var(--font)}
+  .auth-tab.on{background:var(--red);color:#fff}
+  /* MFA */
+  .code-inputs{display:flex;gap:6px;margin-bottom:14px}
+  .code-inp{width:38px;height:44px;border:0.5px solid var(--border);border-radius:6px;text-align:center;font-size:18px;font-family:var(--mono);font-weight:500;background:var(--surface);color:var(--text);outline:none}
+  .code-inp:focus{border-color:var(--red)}
+  /* Notifications */
+  .notif-item{padding:10px 12px;border-left:3px solid var(--red);background:var(--red-light);border-radius:0 6px 6px 0;margin-bottom:7px;font-size:12px}
+  .notif-time{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+  /* Compare */
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .compare-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px}
+  .compare-pick{width:100%;padding:8px 10px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;background:var(--surface);color:var(--text);margin-bottom:10px}
+  .compare-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:12px}
+  .compare-row:last-child{border:none}
+  .compare-win{color:#2e7d32;font-weight:500}
+  /* Saved */
+  .saved-empty{text-align:center;padding:30px;color:var(--muted);font-size:13px}
+  /* Create course */
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:5px;display:block}
+  .form-input{width:100%;padding:8px 10px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;background:var(--surface);color:var(--text);outline:none}
+  .form-input:focus{border-color:var(--red)}
+  .tag-checkboxes{display:flex;flex-wrap:wrap;gap:6px}
+  .tag-check{padding:4px 9px;border-radius:20px;font-size:11px;cursor:pointer;border:0.5px solid var(--border);background:var(--surface2);color:var(--muted)}
+  .tag-check.sel{background:var(--red);color:#fff;border-color:var(--red)}
+</style>
+
+<div id="app">
+<nav class="nav">
+  <div class="logo">
+    <div class="logo-mark">ISU</div>
+    <div><div class="logo-text">Survival Guide</div><div class="logo-sub">Illinois State University</div></div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="nav('courses',this)">Courses</button>
+    <button class="nav-btn" onclick="nav('saved',this)">Saved</button>
+    <button class="nav-btn" onclick="nav('compare',this)">Compare</button>
+    <button class="nav-btn" onclick="nav('notifications',this)">Notifications</button>
+    <button class="nav-btn" onclick="nav('profile',this)">Profile</button>
+    <button class="nav-btn" onclick="nav('security',this)">Security</button>
+    <button class="nav-btn" onclick="nav('auth',this)">Sign In</button>
+  </div>
+  <div class="avatar">AJ</div>
+</nav>
+
+<!-- COURSES -->
+<div id="view-courses" class="view active">
+  <div class="page-title">Browse Courses</div>
+  <div class="page-sub">Search, filter, rate, and review Illinois State courses</div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="stat-total">8</div><div class="stat-lbl">Courses</div></div>
+    <div class="stat-card"><div class="stat-num">24</div><div class="stat-lbl">Reviews</div></div>
+    <div class="stat-card"><div class="stat-num">5</div><div class="stat-lbl">Departments</div></div>
+  </div>
+  <div class="search-row">
+    <input class="search-input" id="q" placeholder="Search by name, code, tag..." oninput="filter()">
+    <select class="filter-select" id="fdept" onchange="filter()">
+      <option value="">All depts</option>
+      <option>CS</option><option>MATH</option><option>PHYS</option><option>EE</option><option>ME</option>
+    </select>
+    <select class="filter-select" id="flevel" onchange="filter()">
+      <option value="">All levels</option>
+      <option value="1">100-level</option><option value="2">200-level</option>
+      <option value="3">300-level</option><option value="4">400-level</option>
+    </select>
+    <select class="filter-select" id="fsort" onchange="filter()">
+      <option value="rating">Top rated</option>
+      <option value="easy">Easiest</option><option value="hard">Hardest</option>
+    </select>
+    <button class="btn btn-red" onclick="openCreate()">+ Create Course</button>
+  </div>
+  <div class="tags-row" id="tagrow">
+    <span class="tag on" onclick="setTag(this,'')">All</span>
+    <span class="tag" onclick="setTag(this,'curved')">Curved</span>
+    <span class="tag" onclick="setTag(this,'project-heavy')">Project heavy</span>
+    <span class="tag" onclick="setTag(this,'good prof')">Good prof</span>
+    <span class="tag" onclick="setTag(this,'exam-heavy')">Exam heavy</span>
+    <span class="tag" onclick="setTag(this,'online-friendly')">Online friendly</span>
+    <span class="tag" onclick="setTag(this,'heavy-workload')">Heavy workload</span>
+  </div>
+  <div class="courses-grid" id="cgrid"></div>
+</div>
+
+<!-- SAVED -->
+<div id="view-saved" class="view">
+  <div class="page-title">Saved Courses</div>
+  <div class="page-sub">Courses you've bookmarked for quick access</div>
+  <div class="courses-grid" id="saved-grid"></div>
+</div>
+
+<!-- COMPARE -->
+<div id="view-compare" class="view">
+  <div class="page-title">Compare Courses</div>
+  <div class="page-sub">Side-by-side comparison of ratings, difficulty, and tags</div>
+  <div class="compare-grid" id="compare-grid">
+    <div class="compare-card">
+      <select class="compare-pick" id="cmp-a" onchange="renderCompare()">
+        <option value="">Select a course...</option>
+      </select>
+      <div id="cmp-a-body"></div>
+    </div>
+    <div class="compare-card">
+      <select class="compare-pick" id="cmp-b" onchange="renderCompare()">
+        <option value="">Select a course...</option>
+      </select>
+      <div id="cmp-b-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="view-notifications" class="view">
+  <div class="page-title">Notifications</div>
+  <div class="page-sub">Replies and course updates</div>
+  <div id="nlist"></div>
+</div>
+
+<!-- PROFILE -->
+<div id="view-profile" class="view">
+  <div class="page-title">Profile & Settings</div>
+  <div class="page-sub">Manage your account information</div>
+  <div class="profile-card">
+    <div class="profile-av">AJ</div>
+    <div class="field-row"><div class="field-lbl">Name</div><input class="field-input" value="Alex Johnson"></div>
+    <div class="field-row"><div class="field-lbl">Username</div><input class="field-input" style="font-family:var(--mono)" value="@alexj"></div>
+    <div class="field-row"><div class="field-lbl">Email</div><input class="field-input" value="alex.johnson@ilstu.edu"></div>
+    <div class="field-row"><div class="field-lbl">Year</div>
+      <select class="field-input"><option>Freshman</option><option>Sophomore</option><option selected>Junior</option><option>Senior</option><option>Graduate</option></select>
+    </div>
+    <div class="toggle-row">
+      <div><div style="font-size:13px;font-weight:500">Anonymous reviews</div><div style="font-size:11px;color:var(--muted)">Hide your name on all posts</div></div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div class="toggle-row">
+      <div><div style="font-size:13px;font-weight:500">Email notifications</div><div style="font-size:11px;color:var(--muted)">Alerts when someone replies to you</div></div>
+      <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px">
+      <button class="btn btn-red">Save changes</button>
+      <button class="btn btn-outline-red">Change password</button>
+      <button class="btn" style="color:#c00;border-color:#c00">Delete account</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY / MFA -->
+<div id="view-security" class="view">
+  <div class="page-title">Two-Factor Authentication</div>
+  <div class="page-sub">Verify your identity using your ISU email</div>
+  <div style="max-width:360px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:22px">
+    <div style="font-size:14px;font-weight:600;margin-bottom:4px">Enter verification code</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">A 6-digit code was sent to your ISU email.</div>
+    <div class="code-inputs">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,1)">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,2)">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,3)">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,4)">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,5)">
+      <input class="code-inp" maxlength="1" oninput="mfaStep(this,6)">
+    </div>
+    <button class="btn btn-red" onclick="verifyMFA()" style="width:100%">Verify identity</button>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted)">Didn't get a code? <span style="color:var(--red);cursor:pointer">Resend</span></div>
+    <div id="mfa-msg" style="margin-top:8px;font-size:12px"></div>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="view-auth" class="view">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-title">Welcome to ISU Survival Guide</div>
+      <div class="auth-sub">Sign in or create your account</div>
+      <div class="auth-tabs">
+        <button class="auth-tab on" onclick="authTab('signin',this)">Sign in</button>
+        <button class="auth-tab" onclick="authTab('create',this)">Create account</button>
+      </div>
+      <div id="auth-signin">
+        <div class="form-group"><label class="form-label">Username or email</label><input class="form-input" placeholder="@username or email"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="••••••••"></div>
+        <div style="margin-top:4px;margin-bottom:14px;font-size:11px;color:var(--muted)">Forgot password? <span style="color:var(--red);cursor:pointer">Reset</span></div>
+        <button class="btn btn-red" style="width:100%" onclick="signIn()">Sign in</button>
+        <div id="signin-msg" style="margin-top:8px;font-size:12px"></div>
+      </div>
+      <div id="auth-create" style="display:none">
+        <div class="form-group"><label class="form-label">Full name</label><input class="form-input" placeholder="Your name"></div>
+        <div class="form-group"><label class="form-label">ISU email</label><input class="form-input" placeholder="you@ilstu.edu"></div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" placeholder="@handle"></div>
+        <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="••••••••"></div>
+        <div class="form-group"><label class="form-label">Year</label>
+          <select class="form-input"><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option><option>Graduate</option></select>
+        </div>
+        <button class="btn btn-red" style="width:100%" onclick="createAcct()">Create account + verify via email</button>
+        <div id="create-msg" style="margin-top:8px;font-size:12px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- COURSE DETAIL OVERLAY -->
+<div class="overlay" id="det-ov" onclick="closeOv(event,'det-ov')">
+<div class="modal">
+  <div class="m-head">
+    <button class="m-close" onclick="closeOv(null,'det-ov')">✕</button>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="d-code"></div>
+    <div style="font-size:17px;font-weight:600;margin-top:3px" id="d-name"></div>
+    <div style="font-size:12px;color:var(--muted)" id="d-dept"></div>
+  </div>
+  <div class="m-body">
+    <div class="dm-sec">
+      <div class="dm-sec-t">Rate this course</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Overall quality (1–5)</div>
+      <div class="star-row" id="rate-stars"></div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px;margin-top:8px">Difficulty (1–5)</div>
+      <div class="star-row" id="diff-stars"></div>
+      <button class="btn btn-red" style="margin-top:8px" onclick="submitRating()">Submit rating</button>
+      <div id="rate-msg" style="font-size:11px;color:#2e7d32;margin-top:5px"></div>
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-t">Metrics</div>
+      <div style="display:flex;gap:16px" id="d-metrics"></div>
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-t">Rating distribution</div>
+      <div id="d-dist"></div>
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-t">Tags</div>
+      <div id="d-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-t">Add tags (up to 3)</div>
+      <div class="tag-checkboxes" id="d-tag-picks"></div>
+    </div>
+    <div class="dm-sec">
+      <div class="dm-sec-t">Student reviews</div>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <button class="btn" onclick="sortComments('likes')">Sort by likes</button>
+        <button class="btn" onclick="sortComments('default')">Default order</button>
+      </div>
+      <div id="d-comments"></div>
+      <textarea class="add-cmt" rows="3" placeholder="Share your experience (will post anonymously if enabled)..." id="new-cmt"></textarea>
+      <div style="margin-top:6px;display:flex;gap:6px">
+        <button class="btn btn-red" onclick="addComment()">Post review</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- CREATE COURSE OVERLAY -->
+<div class="overlay" id="create-ov" onclick="closeOv(event,'create-ov')">
+<div class="modal" style="max-width:460px">
+  <div class="m-head">
+    <button class="m-close" onclick="closeOv(null,'create-ov')">✕</button>
+    <div style="font-size:16px;font-weight:600">Create a new course</div>
+    <div style="font-size:11px;color:var(--muted)">Only create if the course doesn't already exist</div>
+  </div>
+  <div class="m-body">
+    <div class="form-group"><label class="form-label">Course name</label><input class="form-input" id="nc-name" placeholder="e.g. Introduction to Machine Learning"></div>
+    <div class="form-group"><label class="form-label">Course code</label><input class="form-input" id="nc-code" placeholder="e.g. CS 361"></div>
+    <div class="form-group"><label class="form-label">Department</label>
+      <select class="form-input" id="nc-dept"><option>CS</option><option>MATH</option><option>PHYS</option><option>EE</option><option>ME</option><option>BIO</option><option>CHEM</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Initial tags (up to 3)</label>
+      <div class="tag-checkboxes" id="nc-tags">
+        <span class="tag-check" onclick="pickTag(this)">curved</span>
+        <span class="tag-check" onclick="pickTag(this)">project-heavy</span>
+        <span class="tag-check" onclick="pickTag(this)">good prof</span>
+        <span class="tag-check" onclick="pickTag(this)">exam-heavy</span>
+        <span class="tag-check" onclick="pickTag(this)">online-friendly</span>
+        <span class="tag-check" onclick="pickTag(this)">heavy-workload</span>
+      </div>
+    </div>
+    <button class="btn btn-red" onclick="createCourse()">Create course</button>
+    <div id="create-course-msg" style="margin-top:8px;font-size:12px"></div>
+  </div>
+</div>
+</div>
+
+<script>
+const ALL_TAGS=['curved','project-heavy','good prof','exam-heavy','online-friendly','heavy-workload'];
+let courses=[
+  {id:1,code:'CS 311',name:'Design & Analysis of Algorithms',dept:'CS',level:3,rating:4.3,difficulty:4,tags:['exam-heavy','curved'],saved:false,
+   comments:[{id:1,text:'Fair exams, great prof. Start assignments early.',likes:14,replies:['Agreed! Office hours are super helpful.'],editing:false},
+             {id:2,text:'Harder than expected but very worth it.',likes:9,replies:[],editing:false}]},
+  {id:2,code:'CS 228',name:'Problem Solving in Discrete Structures',dept:'CS',level:2,rating:3.8,difficulty:3,tags:['project-heavy','exam-heavy'],saved:false,
+   comments:[{id:3,text:'Heavy workload but the material is fundamental.',likes:7,replies:[],editing:false}]},
+  {id:3,code:'MATH 317',name:'Theory of Linear Algebra',dept:'MATH',level:3,rating:4.1,difficulty:4,tags:['curved','exam-heavy'],saved:true,
+   comments:[{id:4,text:'Proof-based, challenging. Prof is very responsive.',likes:11,replies:['The weekly problem sets help a lot.'],editing:false}]},
+  {id:4,code:'EE 201',name:'Electric Circuits',dept:'EE',level:2,rating:3.5,difficulty:4,tags:['heavy-workload','exam-heavy'],saved:false,
+   comments:[{id:5,text:'Lab component adds a lot of work.',likes:5,replies:[],editing:false}]},
+  {id:5,code:'CS 476',name:'Software Engineering',dept:'CS',level:4,rating:4.6,difficulty:2,tags:['project-heavy','good prof','online-friendly'],saved:true,
+   comments:[{id:6,text:'Best CS course I have taken. Team project is genuinely fun.',likes:23,replies:['100% agree, learned so much.'],editing:false},
+             {id:7,text:'Very applicable to internship work.',likes:18,replies:[],editing:false}]},
+  {id:6,code:'PHYS 221',name:'Introduction to Classical Physics',dept:'PHYS',level:2,rating:3.4,difficulty:3,tags:['exam-heavy'],saved:false,
+   comments:[{id:8,text:'Typical intro physics. Lectures can be dry.',likes:4,replies:[],editing:false}]},
+  {id:7,code:'CS 361',name:'Introduction to Machine Learning',dept:'CS',level:3,rating:4.8,difficulty:3,tags:['project-heavy','good prof','online-friendly'],saved:false,
+   comments:[{id:9,text:'Incredible course, changed my career plans.',likes:34,replies:['Same here, absolutely loved it.','Best professor I have had at ISU.'],editing:false}]},
+  {id:8,code:'ME 231',name:'Engineering Thermodynamics',dept:'ME',level:2,rating:3.2,difficulty:5,tags:['heavy-workload','exam-heavy'],saved:false,
+   comments:[{id:10,text:'Very difficult but curves exist. Do practice exams.',likes:8,replies:[],editing:false}]},
+];
+let activeTag='', currentCourse=null, ratingPick=0, diffPick=0, nextId=100, commentSortMode='default';
+
+function starsHtml(r,size=13){
+  let s='';
+  for(let i=1;i<=5;i++)s+=`<span style="color:${i<=Math.round(r)?'var(--gold)':'var(--border)'};font-size:${size}px">★</span>`;
+  return s;
+}
+function diffColor(d){return d<=2?'#4caf50':d<=3?'#ff9800':'#e53935'}
+function diffLabel(d){return d<=1?'Very easy':d<=2?'Easy':d<=3?'Moderate':d<=4?'Hard':'Very hard'}
+
+function renderCourses(list){
+  const g=document.getElementById('cgrid');
+  if(!list.length){g.innerHTML='<div style="color:var(--muted);font-size:13px;padding:20px">No courses match your filters.</div>';return}
+  g.innerHTML=list.map(c=>`
+    <div class="course-card" onclick="openCourse(${c.id})">
+      <button class="save-btn ${c.saved?'saved':''}" onclick="event.stopPropagation();toggleSave(${c.id},this)">${c.saved?'★':'☆'}</button>
+      <div class="cc-top"><div class="course-code">${c.code}</div><div class="course-dept">${c.dept}</div></div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-tags">${c.tags.map(t=>`<span class="c-tag">${t}</span>`).join('')}</div>
+      <div class="metrics">
+        <div class="metric"><div style="font-size:12px">${starsHtml(c.rating,12)}</div><div style="font-size:13px;font-weight:600;font-family:var(--mono)">${c.rating.toFixed(1)}</div><div class="metric-lbl">Rating</div></div>
+        <div class="metric"><div class="metric-val" style="color:${diffColor(c.difficulty)}">${c.difficulty}/5</div><div class="diff-bar"><div class="diff-fill" style="width:${c.difficulty/5*100}%;background:${diffColor(c.difficulty)}"></div></div><div class="metric-lbl">Difficulty</div></div>
+        <div class="metric"><div class="metric-val" style="font-size:14px">${c.comments.length}</div><div class="metric-lbl">Reviews</div></div>
+      </div>
+    </div>`).join('');
+}
+
+function filter(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const dept=document.getElementById('fdept').value;
+  const level=document.getElementById('flevel').value;
+  const sort=document.getElementById('fsort').value;
+  let list=courses.filter(c=>{
+    const mq=!q||c.name.toLowerCase().includes(q)||c.code.toLowerCase().includes(q)||c.tags.some(t=>t.includes(q));
+    const md=!dept||c.dept===dept;
+    const ml=!level||String(Math.floor(parseInt(c.code.match(/\d+/)?.[0]||'0')/100))===level;
+    const mt=!activeTag||c.tags.includes(activeTag);
+    return mq&&md&&ml&&mt;
+  });
+  if(sort==='rating')list.sort((a,b)=>b.rating-a.rating);
+  else if(sort==='easy')list.sort((a,b)=>a.difficulty-b.difficulty);
+  else if(sort==='hard')list.sort((a,b)=>b.difficulty-a.difficulty);
+  renderCourses(list);
+}
+
+function setTag(el,tag){
+  document.querySelectorAll('#tagrow .tag').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on'); activeTag=tag; filter();
+}
+
+function toggleSave(id,btn){
+  const c=courses.find(x=>x.id===id);
+  c.saved=!c.saved;
+  btn.textContent=c.saved?'★':'☆';
+  btn.classList.toggle('saved',c.saved);
+}
+
+function openCourse(id){
+  const c=courses.find(x=>x.id===id);if(!c)return;
+  currentCourse=c; ratingPick=0; diffPick=0;
+  document.getElementById('d-code').textContent=c.code;
+  document.getElementById('d-name').textContent=c.name;
+  document.getElementById('d-dept').textContent=c.dept+' Department';
+  renderRatingStars();renderDiffStars();
+  document.getElementById('d-metrics').innerHTML=`
+    <div class="metric"><div style="font-size:16px">${starsHtml(c.rating,16)}</div><div style="font-size:20px;font-weight:600;font-family:var(--mono)">${c.rating.toFixed(1)}</div><div class="metric-lbl">Avg rating</div></div>
+    <div class="metric"><div class="metric-val" style="font-size:26px;color:${diffColor(c.difficulty)}">${c.difficulty}<span style="font-size:14px">/5</span></div><div style="font-size:10px;color:${diffColor(c.difficulty)}">${diffLabel(c.difficulty)}</div><div class="metric-lbl">Difficulty</div></div>`;
+  renderDist(c);
+  document.getElementById('d-tags').innerHTML=c.tags.map(t=>`<span class="c-tag">${t}</span>`).join('');
+  const picksEl=document.getElementById('d-tag-picks');
+  picksEl.innerHTML=ALL_TAGS.map(t=>`<span class="tag-check ${c.tags.includes(t)?'sel':''}" onclick="addTagToCourse('${t}',this)">${t}</span>`).join('');
+  renderComments(c);
+  document.getElementById('rate-msg').textContent='';
+  document.getElementById('det-ov').classList.add('open');
+}
+
+function renderDist(c){
+  const dist=[0,0,0,0,0];
+  c.comments.forEach((_,i)=>dist[Math.min(4,i)]++);
+  const total=Math.max(1,c.comments.length);
+  document.getElementById('d-dist').innerHTML=[5,4,3,2,1].map(star=>{
+    const pct=Math.round((dist[star-1]/total)*100);
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+      <span style="font-size:10px;width:12px;text-align:right;color:var(--muted)">${star}</span>
+      <span style="color:var(--gold);font-size:11px">★</span>
+      <div style="flex:1;height:6px;background:var(--surface2);border-radius:3px">
+        <div style="width:${pct}%;height:100%;background:var(--gold);border-radius:3px"></div>
+      </div>
+      <span style="font-size:10px;color:var(--muted);width:24px">${pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderRatingStars(){
+  document.getElementById('rate-stars').innerHTML=[1,2,3,4,5].map(i=>
+    `<span class="star ${i<=ratingPick?'on':''}" onclick="pickRating(${i})">★</span>`).join('');
+}
+function renderDiffStars(){
+  document.getElementById('diff-stars').innerHTML=[1,2,3,4,5].map(i=>
+    `<span class="star ${i<=diffPick?'on':''}" onclick="pickDiff(${i})">★</span>`).join('');
+}
+function pickRating(n){ratingPick=n;renderRatingStars()}
+function pickDiff(n){diffPick=n;renderDiffStars()}
+function submitRating(){
+  if(!ratingPick||!diffPick){document.getElementById('rate-msg').style.color='var(--red)';document.getElementById('rate-msg').textContent='Please select both a rating and difficulty.';return}
+  currentCourse.rating=parseFloat(((currentCourse.rating+ratingPick)/2).toFixed(1));
+  currentCourse.difficulty=Math.round((currentCourse.difficulty+diffPick)/2);
+  document.getElementById('rate-msg').style.color='#2e7d32';
+  document.getElementById('rate-msg').textContent='Rating submitted! Thank you.';
+  document.getElementById('d-metrics').innerHTML=`
+    <div class="metric"><div style="font-size:16px">${starsHtml(currentCourse.rating,16)}</div><div style="font-size:20px;font-weight:600;font-family:var(--mono)">${currentCourse.rating.toFixed(1)}</div><div class="metric-lbl">Avg rating</div></div>
+    <div class="metric"><div class="metric-val" style="font-size:26px;color:${diffColor(currentCourse.difficulty)}">${currentCourse.difficulty}<span style="font-size:14px">/5</span></div><div class="metric-lbl">Difficulty</div></div>`;
+  filter();
+}
+
+function addTagToCourse(tag,el){
+  if(!currentCourse)return;
+  const has=currentCourse.tags.includes(tag);
+  if(has){currentCourse.tags=currentCourse.tags.filter(t=>t!==tag);el.classList.remove('sel');}
+  else{if(currentCourse.tags.length>=3)return;currentCourse.tags.push(tag);el.classList.add('sel');}
+  document.getElementById('d-tags').innerHTML=currentCourse.tags.map(t=>`<span class="c-tag">${t}</span>`).join('');
+  filter();
+}
+
+function renderComments(c){
+  let cmts=[...c.comments];
+  if(commentSortMode==='likes')cmts.sort((a,b)=>b.likes-a.likes);
+  const el=document.getElementById('d-comments');
+  if(!cmts.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">No reviews yet.</div>';return}
+  el.innerHTML=cmts.map(cm=>`
+    <div class="cmt" id="cmt-${cm.id}">
+      <div class="cmt-meta">
+        <span class="cmt-who">anonymous cyclone</span>
+        <div class="cmt-actions">
+          <button class="cmt-btn" onclick="likeC(${c.id},${cm.id})">▲ ${cm.likes}</button>
+          <button class="cmt-btn" onclick="replyC(${cm.id})">Reply</button>
+          <button class="cmt-btn" onclick="editC(${c.id},${cm.id})">Edit</button>
+          <button class="cmt-btn" onclick="deleteC(${c.id},${cm.id})">Delete</button>
+        </div>
+      </div>
+      ${cm.editing
+        ?`<textarea class="add-cmt" id="edit-${cm.id}" style="margin-bottom:5px">${cm.text}</textarea>
+           <button class="btn btn-red" onclick="saveEdit(${c.id},${cm.id})">Save</button>
+           <button class="btn" onclick="cancelEdit(${c.id},${cm.id})" style="margin-left:4px">Cancel</button>`
+        :`<div class="cmt-txt">${cm.text}</div>`}
+      ${cm.replies.length?`<div class="reply-thread">${cm.replies.map(r=>`<div class="reply-item">↳ ${r}</div>`).join('')}</div>`:''}
+      <div id="reply-box-${cm.id}" style="display:none;margin-top:6px">
+        <input style="width:100%;padding:6px 8px;border:0.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:12px;background:var(--surface);color:var(--text);outline:none" id="reply-inp-${cm.id}" placeholder="Write a reply...">
+        <button class="btn btn-red" style="margin-top:5px" onclick="postReply(${c.id},${cm.id})">Post reply</button>
+      </div>
+    </div>`).join('');
+}
+
+function likeC(cid,cmid){const c=courses.find(x=>x.id===cid);const cm=c.comments.find(x=>x.id===cmid);if(cm)cm.likes++;renderComments(c);}
+function replyC(cmid){const el=document.getElementById('reply-box-'+cmid);el.style.display=el.style.display==='none'?'block':'none';}
+function postReply(cid,cmid){
+  const inp=document.getElementById('reply-inp-'+cmid);const txt=inp.value.trim();if(!txt)return;
+  const c=courses.find(x=>x.id===cid);const cm=c.comments.find(x=>x.id===cmid);
+  cm.replies.push(txt);inp.value='';document.getElementById('reply-box-'+cmid).style.display='none';
+  renderComments(c);
+}
+function editC(cid,cmid){const c=courses.find(x=>x.id===cid);const cm=c.comments.find(x=>x.id===cmid);cm.editing=true;renderComments(c);}
+function saveEdit(cid,cmid){
+  const c=courses.find(x=>x.id===cid);const cm=c.comments.find(x=>x.id===cmid);
+  cm.text=document.getElementById('edit-'+cmid).value.trim()||cm.text;cm.editing=false;renderComments(c);
+}
+function cancelEdit(cid,cmid){const c=courses.find(x=>x.id===cid);const cm=c.comments.find(x=>x.id===cmid);cm.editing=false;renderComments(c);}
+function deleteC(cid,cmid){const c=courses.find(x=>x.id===cid);c.comments=c.comments.filter(x=>x.id!==cmid);renderComments(c);}
+function sortComments(mode){commentSortMode=mode;if(currentCourse)renderComments(currentCourse);}
+function addComment(){
+  const txt=document.getElementById('new-cmt').value.trim();if(!txt||!currentCourse)return;
+  currentCourse.comments.push({id:nextId++,text:txt,likes:0,replies:[],editing:false});
+  document.getElementById('new-cmt').value='';renderComments(currentCourse);filter();
+}
+
+function nav(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='saved')renderSaved();
+  if(name==='compare')populateCompare();
+}
+
+function renderSaved(){
+  const g=document.getElementById('saved-grid');
+  const list=courses.filter(c=>c.saved);
+  if(!list.length){g.innerHTML='<div class="saved-empty">No saved courses yet. Click ☆ on any course to save it.</div>';return}
+  g.innerHTML=list.map(c=>`
+    <div class="course-card" onclick="openCourse(${c.id})">
+      <button class="save-btn saved" onclick="event.stopPropagation();removeSaved(${c.id},this)">★</button>
+      <div class="cc-top"><div class="course-code">${c.code}</div><div class="course-dept">${c.dept}</div></div>
+      <div class="course-name">${c.name}</div>
+      <div class="course-tags">${c.tags.map(t=>`<span class="c-tag">${t}</span>`).join('')}</div>
+      <div class="metrics">
+        <div class="metric"><div style="font-size:12px">${starsHtml(c.rating,12)}</div><div style="font-size:13px;font-weight:600;font-family:var(--mono)">${c.rating.toFixed(1)}</div><div class="metric-lbl">Rating</div></div>
+        <div class="metric"><div class="metric-val" style="color:${diffColor(c.difficulty)}">${c.difficulty}/5</div><div class="metric-lbl">Difficulty</div></div>
+      </div>
+    </div>`).join('');
+}
+function removeSaved(id){const c=courses.find(x=>x.id===id);c.saved=false;renderSaved();}
+
+function populateCompare(){
+  const opts=courses.map(c=>`<option value="${c.id}">${c.code} — ${c.name}</option>`).join('');
+  ['cmp-a','cmp-b'].forEach(id=>{
+    const el=document.getElementById(id);
+    const cur=el.value;
+    el.innerHTML='<option value="">Select a course...</option>'+opts;
+    el.value=cur;
+  });
+  renderCompare();
+}
+function renderCompare(){
+  ['a','b'].forEach(side=>{
+    const id=parseInt(document.getElementById('cmp-'+side).value);
+    const body=document.getElementById('cmp-'+side+'-body');
+    if(!id){body.innerHTML='';return}
+    const c=courses.find(x=>x.id===id);
+    body.innerHTML=`
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px">${c.name}</div>
+      <div class="compare-row"><span style="color:var(--muted)">Rating</span><span>${starsHtml(c.rating,12)} ${c.rating.toFixed(1)}</span></div>
+      <div class="compare-row"><span style="color:var(--muted)">Difficulty</span><span style="color:${diffColor(c.difficulty)}">${c.difficulty}/5 ${diffLabel(c.difficulty)}</span></div>
+      <div class="compare-row"><span style="color:var(--muted)">Department</span><span>${c.dept}</span></div>
+      <div class="compare-row"><span style="color:var(--muted)">Reviews</span><span>${c.comments.length}</span></div>
+      <div class="compare-row"><span style="color:var(--muted)">Tags</span><span>${c.tags.join(', ')||'—'}</span></div>`;
+  });
+  const aId=parseInt(document.getElementById('cmp-a').value);
+  const bId=parseInt(document.getElementById('cmp-b').value);
+  if(!aId||!bId)return;
+  const a=courses.find(x=>x.id===aId),b=courses.find(x=>x.id===bId);
+  ['cmp-a-body','cmp-b-body'].forEach((bid,idx)=>{
+    const el=document.getElementById(bid);
+    const rows=el.querySelectorAll('.compare-row');
+    const aWins=[a.rating>b.rating,a.difficulty<b.difficulty];
+    if(rows[0])rows[0].querySelector('span:last-child').classList.toggle('compare-win',idx===0?aWins[0]:!aWins[0]);
+    if(rows[1])rows[1].querySelector('span:last-child').classList.toggle('compare-win',idx===0?aWins[1]:!aWins[1]);
+  });
+}
+
+function openCreate(){document.getElementById('create-ov').classList.add('open')}
+function pickTag(el){
+  const container=document.getElementById('nc-tags');
+  const sel=container.querySelectorAll('.sel');
+  if(el.classList.contains('sel')){el.classList.remove('sel');}
+  else if(sel.length<3){el.classList.add('sel');}
+}
+function createCourse(){
+  const name=document.getElementById('nc-name').value.trim();
+  const code=document.getElementById('nc-code').value.trim();
+  const dept=document.getElementById('nc-dept').value;
+  const msg=document.getElementById('create-course-msg');
+  if(!name||!code){msg.style.color='var(--red)';msg.textContent='Please fill in course name and code.';return}
+  if(courses.some(c=>c.name.toLowerCase()===name.toLowerCase())){msg.style.color='var(--red)';msg.textContent='A course with that name already exists.';return}
+  const tags=[...document.querySelectorAll('#nc-tags .sel')].map(el=>el.textContent);
+  const level=parseInt(code.match(/\d+/)?.[0]||'100')/100;
+  courses.push({id:nextId++,code,name,dept,level:Math.floor(level),rating:0,difficulty:0,tags,saved:false,comments:[]});
+  msg.style.color='#2e7d32';msg.textContent='Course created successfully!';
+  document.getElementById('stat-total').textContent=courses.length;
+  filter();
+  setTimeout(()=>{closeOv(null,'create-ov');msg.textContent='';},1200);
+}
+
+function closeOv(e,id){
+  if(!e||e.target===document.getElementById(id))
+    document.getElementById(id).classList.remove('open');
+}
+
+const notifs=[
+  {msg:'New review added for CS 361: Introduction to Machine Learning',time:'2 min ago'},
+  {msg:'CS 476 rating updated to 4.6 — 3 new comments',time:'1 hr ago'},
+  {msg:'New course added: BIO 201 — Cell Biology',time:'Yesterday'},
+  {msg:'Your review on MATH 317 received 5 likes',time:'2 days ago'},
+];
+document.getElementById('nlist').innerHTML=notifs.map(n=>`<div class="notif-item">${n.msg}<div class="notif-time">${n.time}</div></div>`).join('');
+
+const cinps=document.querySelectorAll('.code-inp');
+function mfaStep(el,idx){if(el.value&&idx<6)cinps[idx].focus();const done=[...cinps].every(i=>i.value);if(done)verifyMFA();}
+function verifyMFA(){
+  const code=[...cinps].map(i=>i.value).join('');
+  const m=document.getElementById('mfa-msg');
+  if(code.length===6){m.style.color='#2e7d32';m.textContent='Identity verified successfully.';}
+  else{m.style.color='var(--red)';m.textContent='Please complete the 6-digit code.';}
+}
+
+function authTab(tab,btn){
+  document.querySelectorAll('.auth-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('auth-signin').style.display=tab==='signin'?'block':'none';
+  document.getElementById('auth-create').style.display=tab==='create'?'block':'none';
+}
+function signIn(){
+  const m=document.getElementById('signin-msg');
+  m.style.color='#2e7d32';m.textContent='Signed in successfully! Redirecting...';
+}
+function createAcct(){
+  const m=document.getElementById('create-msg');
+  m.style.color='#2e7d32';m.textContent='Account created! Check your ISU email to verify via two-factor authentication.';
+}
+
+filter();
+</script>
