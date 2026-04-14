@@ -44,7 +44,7 @@ public class Course
         return department;
     }
 
-    public List<CourseTag> getCourseTagList()
+    public List<ClassTag> getCourseTagList()
     {
         // returning an unmodifiable list using Collections so that only the add methods in appropriate classes can modify the list
         return Collections.unmodifiableList(courseTagList);
