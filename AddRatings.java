@@ -1,20 +1,20 @@
-public class AddRatings
+public class Rating
 {
     private int courseRating;
     private int difficultyRating;
+    private int min_rating = 1;
+    private int max_rating = 5;
+    private Course course;
 
-    public AddRatings(int courseRating, int difficultyRating)
+    public Rating(Course course)
     {
-        if(courseRating == null)
+        if(course == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Course can not be null.");
         }
-        if(difficultyRating == null)
-        {
-            throw new IllegalArgumentException();
-        }
-        this.courseRating = courseRating;
-        this.difficultyRating = difficultyRating;
+        this.course = course;
+        this.courseRating = 0;
+        this.difficultyRating = 0;
     }
 
     public int getCourseRating()
@@ -27,36 +27,35 @@ public class AddRatings
         return difficultyRating;
     }
 
-    public void setCourseRating(int courseRating)
+    public String toString()
     {
-        if(courseRating == null)
-        {
-            throw new IllegalArgumentException();
-        }
-        this.courseRating = courseRating;
+        return String.format("Rating{courseRating=%d, difficultyRating=%d}", courseRating, difficultyRating);
     }
 
-    public void setDifficultyRating(int difficultyRating)
+    public void addCourseRating(int courseRating)
     {
-        if(difficultyRating == null)
+        if(courseRating < min_rating || courseRating > max_rating)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Course rating must be between 1 and 5.");
+        }
+        this.courseRating = courseRating
+    }
+
+    public void addDifficultyRating(int difficultyRating)
+    {
+        if(difficultyRating < min_rating || difficultyRating > max_rating)
+        {
+            throw new IllegalArgumentException("Course's difficulty rating must be between 1 and 5.");
         }
         this.difficultyRating = difficultyRating;
     }
 
-    public String toString()
+    public void addRating()
     {
-        return "||Course Ratings||\n" + "Course Rating: " + courseRating + "\nDifficulty Rating: " + difficultyRating;
-    }
-
-    public void addRating(int rating)
-    {
-        // implementation needed
-    }
-
-    public void addDifficulty(int diffRating)
-    {
-        // implementation needed
+        if (!(courseRating != 0 && difficultyRating != 0))
+        {
+            throw new IllegalStateException("Both ratings must be fulfilled.");
+        }
+        course.updateRating(this);
     }
 }

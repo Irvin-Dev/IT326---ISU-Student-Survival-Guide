@@ -1,3 +1,7 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Course
 {
     private String courseName;
@@ -5,28 +9,19 @@ public class Course
     private int courseCode;
     private String department;
 
+    private List<CourseTag> courseTagList;
+    private List<Rating> ratingList;
+    private List<Comment> commentList;
+
     public Course(String courseName, int courseId, int courseCode, String department)
     {
-        if(courseName == null || courseName.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
-        if(courseId == null)
-        {
-            throw new IllegalArgumentException();
-        }
-        if(courseCode == null)
-        {
-            throw new IllegalArgumentException();
-        }
-        if(department == null || department.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
         this.courseName = courseName;
         this.courseId = courseId;
         this.courseCode = courseCode;
         this.department = department;
+        this.courseTagList = new ArrayList<>();
+        this.ratingList = new ArrayList<>();
+        this.commentList = new ArrayList<>();
     }
 
     public String getCourseName()
@@ -49,59 +44,90 @@ public class Course
         return department;
     }
 
+    public List<CourseTag> getCourseTagList()
+    {
+        // returning an unmodifiable list using Collections so that only the add methods in appropriate classes can modify the list
+        return Collections.unmodifiableList(courseTagList);
+    }
+
+    public List<Rating> getRatingList()
+    {
+        return Collections.unmodifiableList(ratingList);
+    }
+
+    public List<Comment> getCommentList()
+    {
+        return Collections.unmodifiableList(commentList);
+    }
+
     public void setCourseName(String courseName)
     {
-        if(courseName == null || courseName.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
         this.courseName = courseName;
     }
 
     public void setCourseId(int courseId)
     {
-        if(courseId == null)
-        {
-            throw new IllegalArgumentException();
-        }
         this.courseId = courseID;
     }
 
     public void setCourseCode(int courseCode)
     {
-        if(courseCode == null)
-        {
-            throw new IllegalArgumentException();
-        }
         this.courseCode = courseCode;
     }
 
     public void setDepartment(String department)
     {
-        if(department == null || department.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
         this.department = department;
     }
 
     public String toString()
     {
-        return "||Course||\n" + "Course Name: " + courseName + "\nCourse ID: " + courseId + "\nCourse Code: " + courseCode + "\nDepartment: " + department;
+        return String.format("Course{courseName='%s', courseId=%d, courseCode=%d, department='%s', " + "tags=%d, ratings=%d, comments=%d}", courseName, courseId, courseCode, department, courseTagList.size(), ratingList.size(), commentList.size());
     }
 
-    public void updateTagList()
+    public void updateTagList(CourseTag courseTag)
     {
-        // implementation needed
+        if(courseTag == null)
+        {
+            throw new IllegalArgumentException("Course Tag can not be null.");
+        }
+        courseTagList.add(courseTag);
     }
 
-    public void updateRatings()
+    public void updateRatings(Rating rating)
     {
-        // implementation needed
+        if(rating == null)
+        {
+            throw new IllegalArgumentException("Rating can not be null.");
+        }
+        ratingList.add(rating);
     }
 
-    public void generateCourseDistribution()
+    public void updateComments(Comment comment)
     {
-        // implementation needed
+        if(comment == null)
+        {
+            throw new IllegalArgumentException("Comment can not be null.");
+        }
+        commentList.add(comment);
+    }
+
+    public int[] generateCourseDistribution()
+    {
+        // index 0 represents rating of 1, index 4 represents rating of 5
+        int[] distribution = new int[5];
+
+        if(ratingList.isEmpty())
+        {
+            System.out.println("No rating available.");
+            return distribution;
+        }
+
+        for(Rating rating : ratingList)
+        {
+            distribution[rating.getCourseRating() - 1]++;
+        }
+
+        return distribution;
     }
 }

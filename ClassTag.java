@@ -1,14 +1,16 @@
 public class ClassTag
 {
     private String keyword;
+    private Course course;
 
-    public ClassTag(String keyword)
+    public ClassTag(Course course)
     {
-        if(keyword == null || keyword.isEmpty())
+        if(course == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Course can not be null.");
         }
-        this.keyword = keyword;
+        this.course = course;
+        this.keyword = "";
     }
 
     public String getKeyword()
@@ -16,17 +18,17 @@ public class ClassTag
         return keyword;
     }
 
-    public void setKeyword(String keyword)
+    public void addCourseTag(String keyword)
     {
-        if(keyword == null || keyword.isEmpty())
+        if(keyword == null)
         {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Tag keyword can noot be null.");
         }
         this.keyword = keyword;
     }
 
     public String toString()
     {
-        return "Class Tag(s): " + keyword;
+        return String.format("ClassTag{keyword='%s'}", keyword);
     }
 }
