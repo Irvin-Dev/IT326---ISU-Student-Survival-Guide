@@ -9,7 +9,7 @@ public class Course
     private int courseCode;
     private String department;
 
-    private List<CourseTag> courseTagList;
+    private List<ClassTag> courseTagList;
     private List<Rating> ratingList;
     private List<Comment> commentList;
 
@@ -85,7 +85,7 @@ public class Course
         return String.format("Course{courseName='%s', courseId=%d, courseCode=%d, department='%s', " + "tags=%d, ratings=%d, comments=%d}", courseName, courseId, courseCode, department, courseTagList.size(), ratingList.size(), commentList.size());
     }
 
-    public void updateTagList(CourseTag courseTag)
+    public void updateTagList(ClassTag courseTag)
     {
         if(courseTag == null)
         {
