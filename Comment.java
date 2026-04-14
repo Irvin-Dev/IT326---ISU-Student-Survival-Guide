@@ -29,15 +29,6 @@ public class Comment
         return Collections.unmodifiableList(courseTags);
     }
 
-    public void setComment(String comment)
-    {
-        if(comment == null || comment.isEmpty())
-        {
-            throw new IllegalArgumentException();
-        }
-        this.comment = comment;
-    }
-
     public String toString()
     {
         return String.format("Comment{commentContent='%s', tags=%d}", commentContent, courseTags.size());
