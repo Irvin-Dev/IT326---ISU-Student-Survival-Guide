@@ -1,6 +1,7 @@
 package app;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Base class for CRUD handlers.
@@ -30,7 +31,6 @@ public abstract class DBCRUDHandler<T> {
     protected Connection open() throws SQLException {
         return connection.getConnection();
     }
-
     /**
      * Inserts a new record.
      *
@@ -38,7 +38,7 @@ public abstract class DBCRUDHandler<T> {
      * @return True if successful.
      * @throws SQLException If the insert fails.
      */
-    public abstract boolean create(T obj) throws SQLException;
+    public abstract boolean create(T obj) ;
 
     /**
      * Retrieves a record by ID.
@@ -47,7 +47,7 @@ public abstract class DBCRUDHandler<T> {
      * @return The matching object, or null.
      * @throws SQLException If the query fails.
      */
-    public abstract T get(int id) throws SQLException;
+    public abstract T get(int id);
     /**
      * Retrieves a records for the type.
      *
@@ -55,7 +55,7 @@ public abstract class DBCRUDHandler<T> {
      * @return The objects, or null.
      * @throws SQLException If the query fails.
      */
-
+    public abstract List<T> getAll();
 
     /**
      * Updates an existing record.

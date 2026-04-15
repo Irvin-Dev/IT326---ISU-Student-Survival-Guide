@@ -1,6 +1,8 @@
 package app;
 
 import java.sql.DriverManager;
+import java.util.List;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -14,9 +16,9 @@ public class Main {
    
         System.out.println("Drivers loaded: " + DriverManager.getDrivers());
         // Handlers
-        AccountHandler accountHandler = new AccountHandler(connection);
-        CourseHandler courseHandler = new CourseHandler(connection);
-        CommentHandler commentHandler = new CommentHandler(connection);
+        AccountHandler accountHandler = new SQLAccountHandler(connection);
+        CourseHandler courseHandler = new  SQLCourseHandler(connection);
+        CommentHandler commentHandler = new SQLCommentHandler(connection);
 
         try {
             System.out.println("=== TESTING ACCOUNT HANDLER ===");
@@ -32,6 +34,12 @@ public class Main {
             accountHandler.update(fetchedAcc);
             System.out.println("Updated Account.");
 
+            List<Account> allAccounts = accountHandler.getAll();
+            System.out.println("All Accounts:");
+            for (Account a : allAccounts) {
+                System.out.println(a);
+            }
+
 
 
             System.out.println("\n=== TESTING COURSE HANDLER ===");
@@ -44,9 +52,17 @@ public class Main {
             Course fetchedCourse = courseHandler.get(0);
             System.out.println("Fetched Course: " + fetchedCourse);
 
+            if(fetchedCourse != null) {
             fetchedCourse.setCourseName("Advanced Data Structures");
             courseHandler.update(fetchedCourse);
             System.out.println("Updated Course.");
+            }
+
+            List<Course> allCourses = courseHandler.getAll();
+            System.out.println("All Courses:");
+            for (Course c : allCourses) {
+                System.out.println(c);
+            }
 
 
             System.out.println("\n=== TESTING COMMENT HANDLER ===");
@@ -57,16 +73,20 @@ public class Main {
             commentHandler.create(comment);
             System.out.println("Inserted Comment.");
 
-            Comment fetchedComment = commentHandler.get(6);
+            Comment fetchedComment = commentHandler.get(9);
             System.out.println("Fetched Comment: " + fetchedComment);
 
+            if(fetchedComment != null) {
             fetchedComment.setContent("Updated comment text.");
             commentHandler.update(fetchedComment);
             System.out.println("Updated Comment.");
+            }
 
-            commentHandler.delete(6);
-            System.out.println("Deleted Comment.");
-
+            List<Comment> allComments = commentHandler.getAll();
+            System.out.println("All Comments:");
+            for (Comment c : allComments) {
+                System.out.println(c);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
