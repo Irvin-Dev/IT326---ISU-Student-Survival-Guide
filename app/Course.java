@@ -1,74 +1,112 @@
-package app;
-/**
- * Temporary course object to test CourseHandler CRUD operations.
- */
-public class Course {
+import java.util.Random;
 
-    private int courseId;       // Primary key
-    private String courseName;   // Name of the course
-    private int courseCode;      // Numeric course code (e.g., 101)
-    private String department;  // Department offering the course
+public class Course
+{
+    private static final Random random = new Random();
+    private String courseName;
+    private int courseId = generateCourseID();
+    private int courseCode;
+    private String department;
 
-    /**
-     * Full constructor used when reading from the database.
-     */
-    public Course(int courseId, String coursename, int courseCode, String department) {
+    public Course(String courseName, Integer courseCode, String department)
+    {
+        if(courseName == null || courseName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        if(courseCode == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        if(department == null || department.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
+        this.courseName = courseName;
         this.courseId = courseId;
-        this.courseName = coursename;
         this.courseCode = courseCode;
         this.department = department;
     }
 
-    /**
-     * Constructor used when creating a new course (ID auto-generated).
-     */
-    public Course(String coursename, int courseCode, String department) {
-        this.courseName = coursename;
-        this.courseCode = courseCode;
-        this.department = department;
+    private int generateCourseID() {
+        int min = 100000000;
+        int max = 900000000;
+        return random.nextInt((max - min) + 1) + min;
     }
 
-    // Getters
-    public int getCourseId() {
-        return courseId;
-    }
-
-    public String getCourseName() {
+    public String getCourseName()
+    {
         return courseName;
     }
 
-    public int getCourseCode() {
+    public int getCourseId()
+    {
+        return courseId;
+    }
+
+    public int getCourseCode()
+    {
         return courseCode;
     }
 
-    public String getDepartment() {
+    public String getDepartment()
+    {
         return department;
     }
 
-    // Setters
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
-    public void setCourseName(String courseName) {
+    public void setCourseName(String courseName)
+    {
+        if(courseName == null || courseName.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
         this.courseName = courseName;
     }
 
-    public void setCourseCode(int courseCode) {
+    public void setCourseId(Integer courseId)
+    {
+        if(courseId == null)
+        {
+            throw new IllegalArgumentException();
+        }
+        this.courseId = courseId;
+    }
+
+    public void setCourseCode(Integer courseCode)
+    {
+        if(courseCode == null)
+        {
+            throw new IllegalArgumentException();
+        }
         this.courseCode = courseCode;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(String department)
+    {
+        if(department == null || department.isEmpty())
+        {
+            throw new IllegalArgumentException();
+        }
         this.department = department;
     }
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "courseId=" + courseId +
-                ", courseName='" + courseName + '\'' +
-                ", courseCode=" + courseCode +
-                ", department='" + department + '\'' +
-                '}';
+    public String toString()
+    {
+        return "||Course||\n" + "Course Name: " + courseName + "\nCourse ID: " + courseId + "\nCourse Code: " + courseCode + "\nDepartment: " + department;
+    }
+
+    public void updateTagList()
+    {
+        // implementation needed
+    }
+
+    public void updateRatings()
+    {
+        // implementation needed
+    }
+
+    public void generateCourseDistribution()
+    {
+        // implementation needed
     }
 }
