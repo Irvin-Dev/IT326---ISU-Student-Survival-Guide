@@ -7,7 +7,7 @@ import java.util.List;
  * Handles all CRUD operations for the Course table.
  * Extends DBCRUDHandler to inherit connection handling and method structure.
  */
-public class SQLCourseHandler extends CourseHandler {
+public class SQLCourseHandler extends DBCRUDHandler<Course> {
 
     /**
      * Passes database credentials to the parent DBCRUDHandler.
@@ -24,7 +24,7 @@ public class SQLCourseHandler extends CourseHandler {
      */
     @Override
     public boolean create(Course course){
-        if(this.get(course.getCourseId()) != null) {
+        if(this.getById(course.getCourseId()) != null) {
             System.out.println("Course with ID " + course.getCourseId() + " already exists.");
             return false;
         }
@@ -55,7 +55,7 @@ public class SQLCourseHandler extends CourseHandler {
      * @throws SQLException If the SELECT fails.
      */
     @Override
-    public Course get(int id) {
+    public Course getById(int id) {
         String sql = "SELECT * FROM course WHERE courseId = ?";
 
         try (Connection conn = open();
@@ -66,8 +66,8 @@ public class SQLCourseHandler extends CourseHandler {
 
             if (rs.next()) {
                 return new Course(
-                    rs.getInt("courseId"),
                     rs.getString("courseName"),
+                    rs.getInt("courseId"),
                     rs.getInt("courseCode"),
                     rs.getString("department")
                 );
@@ -89,8 +89,8 @@ public class SQLCourseHandler extends CourseHandler {
 
             while (rs.next()) {
                 courses.add(new Course(
-                    rs.getInt("courseId"),
                     rs.getString("courseName"),
+                    rs.getInt("courseId"),
                     rs.getInt("courseCode"),
                     rs.getString("department")
                 ));

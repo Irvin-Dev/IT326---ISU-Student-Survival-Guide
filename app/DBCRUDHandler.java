@@ -47,7 +47,7 @@ public abstract class DBCRUDHandler<T> {
      * @return The matching object, or null.
      * @throws SQLException If the query fails.
      */
-    public abstract T get(int id);
+    public abstract T getById(int id);
     /**
      * Retrieves a records for the type.
      *

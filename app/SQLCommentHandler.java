@@ -8,7 +8,7 @@ import java.util.List;
  * Handles all CRUD operations for the Comment table.
  * Extends DBCRUDHandler to inherit connection handling and method structure.
  */
-public class SQLCommentHandler extends CommentHandler {
+public class SQLCommentHandler extends DBCRUDHandler<Comment> {
 
     /**
      * Creates an CommentHandler using the given database connection.
@@ -26,6 +26,7 @@ public class SQLCommentHandler extends CommentHandler {
      * @return True if the insert succeeds.
      * @throws SQLException If the INSERT fails.
      */
+
 public boolean create(Comment comment) {
     if (comment.getCourseId() < 0)
         throw new IllegalArgumentException("courseId must be a valid existing course.");
@@ -46,7 +47,7 @@ public boolean create(Comment comment) {
         stmt.setInt(2, comment.getAccountId());
 
         // Content
-        stmt.setString(3, comment.getContent());
+        stmt.setString(3, comment.getCommentContent());
 
         // Timestamps
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -57,8 +58,8 @@ public boolean create(Comment comment) {
         stmt.setInt(6, comment.getLikes());
 
         // Nullable parentCommentId
-        if (comment.getParentCommentId() == null) {
-            stmt.setNull(7, java.sql.Types.INTEGER);
+        if (comment.getParentCommentId() != null) {
+             stmt.setNull(7, Types.INTEGER);    
         } else {
             stmt.setInt(7, comment.getParentCommentId());
         }
@@ -83,7 +84,7 @@ public boolean create(Comment comment) {
      * @throws SQLException If the SELECT fails.
      */
 @Override
-public Comment get(int id) {
+public Comment getById(int id) {
     String sql = "SELECT commentid, courseid, accountid, parentcommentid, "
                + "commentcontent, likes, createdat, updatedat "
                + "FROM commentinfo WHERE commentid = ?";
@@ -102,10 +103,10 @@ public Comment get(int id) {
 
             return new Comment(
                 rs.getInt("commentid"),
-                rs.getInt("courseid"),
-                rs.getInt("accountid"),
-                parentId,
                 rs.getString("commentcontent"),
+                rs.getInt("accountid"),
+                rs.getInt("courseid"),
+                parentId,
                 rs.getInt("likes"),
                 rs.getTimestamp("createdat"),
                 rs.getTimestamp("updatedat")
@@ -118,78 +119,55 @@ public Comment get(int id) {
     return null;
 }
 
-public java.util.List<Comment> getAll() {
+
+    /**
+     * Retrieves all Comment records from the database.
+     *
+     * @return List of all Comments, or empty list if none found.
+     * @throws SQLException If the SELECT fails.
+     */
+@Override
+public List<Comment> getAll() {
     String sql = "SELECT commentid, courseid, accountid, parentcommentid, "
                + "commentcontent, likes, createdat, updatedat "
                + "FROM commentinfo";
-    java.util.List<Comment> comments = new java.util.ArrayList<>();
-    try (Connection conn = open();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        ResultSet rs = stmt.executeQuery();
+    List<Comment> comments = new ArrayList<>();
+
+    try (Connection conn = open();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
 
         while (rs.next()) {
+
             Integer parentId = rs.getObject("parentcommentid") == null
                     ? null
                     : rs.getInt("parentcommentid");
 
             Comment comment = new Comment(
                 rs.getInt("commentid"),
-                rs.getInt("courseid"),
-                rs.getInt("accountid"),
-                parentId,
                 rs.getString("commentcontent"),
+                rs.getInt("accountid"),
+                rs.getInt("courseid"),
+                parentId,
                 rs.getInt("likes"),
                 rs.getTimestamp("createdat"),
                 rs.getTimestamp("updatedat")
             );
+
             comments.add(comment);
         }
-    }
-    catch(SQLException e) {
+
+    } catch (SQLException e) {
         e.printStackTrace();
     }
+
     return comments;
 }
 
 
 
 
-    @Override
-    public java.util.List<Comment> getByCourseId(int courseId) {
-        String sql = "SELECT commentid, courseid, accountid, parentcommentid, "
-                   + "commentcontent, likes, createdat, updatedat "
-                   + "FROM commentinfo WHERE courseid = ?";
-        java.util.List<Comment> comments = new java.util.ArrayList<>();
-        try (Connection conn = open();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, courseId);
-            ResultSet rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Integer parentId = rs.getObject("parentcommentid") == null
-                        ? null
-                        : rs.getInt("parentcommentid");
-
-                Comment comment = new Comment(
-                    rs.getInt("commentid"),
-                    rs.getInt("courseid"),
-                    rs.getInt("accountid"),
-                    parentId,
-                    rs.getString("commentcontent"),
-                    rs.getInt("likes"),
-                    rs.getTimestamp("createdat"),
-                    rs.getTimestamp("updatedat")
-                );
-                comments.add(comment);
-            }
-        }
-        catch(SQLException e) {
-            e.printStackTrace();
-        }
-        return comments;
-    }
 
     /**
      * Updates an existing Comment record.
@@ -210,7 +188,7 @@ public boolean update(Comment comment) {
     try (Connection conn = open();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setString(1, comment.getContent());
+        stmt.setString(1, comment.getCommentContent());
         stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
         stmt.setInt(3, comment.getLikes());
 

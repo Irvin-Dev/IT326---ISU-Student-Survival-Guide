@@ -6,7 +6,7 @@ import java.util.List;
  * Handles CRUD operations for the Account table.
  * Uses DBCRUDHandler for shared connection logic.
  */
-public class SQLAccountHandler extends AccountHandler {
+public class SQLAccountHandler extends DBCRUDHandler<Account> {
 
 
     /**
@@ -27,7 +27,7 @@ public class SQLAccountHandler extends AccountHandler {
      */
     @Override
     public boolean create(Account account)  {
-        if(this.get(account.getAccountId()) != null) {
+        if(this.getById(account.getAccountId()) != null) {
             System.out.println("Account with ID " + account.getAccountId() + " already exists.");
             return false;
         }
@@ -65,7 +65,7 @@ public class SQLAccountHandler extends AccountHandler {
      * @throws SQLException If the SQL operation fails.
      */
     @Override
-    public Account get(int id) {
+    public Account getById(int id) {
         String sql = "SELECT * FROM account WHERE accountId = ?";
 
         try (Connection conn = open();
@@ -102,7 +102,31 @@ public class SQLAccountHandler extends AccountHandler {
      */
     @Override
     public List<Account> getAll() {
-        return List.of(); // Placeholder for actual implementation
+        String sql = "SELECT * FROM account";
+        List<Account> accounts = new java.util.ArrayList<>();
+
+        try (Connection conn = open();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                accounts.add(new Account(
+                    rs.getInt("accountId"),
+                    rs.getString("name"),
+                    rs.getString("email"),
+                    rs.getString("password"),
+                    rs.getInt("yearValue"),
+                    rs.getBoolean("anonymity"),
+                    rs.getBoolean("notifications"),
+                    rs.getString("department")
+                ));
+            }
+            return accounts;
+        }
+        catch(SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
