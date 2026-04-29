@@ -109,7 +109,7 @@ public class Main {
 
                         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-                        Comment newComment = new Comment(text, accId, courseId, null, 0, timestamp, timestamp, rating, diff);
+                        Comment newComment = new Comment(text, accId, courseId, null, timestamp, timestamp, rating, diff);
                         commentHandler.create(newComment);
                         System.out.println("Comment created.");
                         break;

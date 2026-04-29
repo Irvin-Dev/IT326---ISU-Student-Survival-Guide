@@ -14,13 +14,12 @@ public class Comment
     private int courseId;
     private  int accountId;
     private Integer parentCommentId;
-    private int likes;
     private double courseRating;
     private double difficultyRating;
     private Timestamp updatedAt;
     private Timestamp createdAt;
 
-    public Comment(int commentId, String commentContent, int accountId, int courseId,Integer parentId, int likes, Timestamp createdAt, Timestamp updatedAt, double courseRating, double difficultyRating){
+    public Comment(int commentId, String commentContent, int accountId, int courseId,Integer parentId, Timestamp createdAt, Timestamp updatedAt, double courseRating, double difficultyRating){
 
         this.commentId = commentId;
         this.commentContent = commentContent;
@@ -28,7 +27,6 @@ public class Comment
         this.courseId=courseId;
         this.accountId=accountId;
         parentCommentId=parentId;
-        this.likes =likes;
         this.updatedAt=updatedAt;
         this.createdAt=createdAt;
         this.courseRating = courseRating;
@@ -36,14 +34,13 @@ public class Comment
 
         this.courseTags = new ArrayList<>();
     }
-        public Comment( String commentContent, int accountId, int courseId,Integer parentId, int likes, Timestamp createdAt, Timestamp updatedAt, double courseRating, double difficultyRating){
+        public Comment( String commentContent, int accountId, int courseId,Integer parentId,  Timestamp createdAt, Timestamp updatedAt, double courseRating, double difficultyRating){
 
         this.commentContent = commentContent;
         this.courseTags = new ArrayList<>();
         this.courseId=courseId;
         this.accountId=accountId;
         parentCommentId=parentId;
-        this.likes =likes;
         this.updatedAt=updatedAt;
         this.createdAt=createdAt;
         this.courseRating = courseRating;
@@ -51,7 +48,7 @@ public class Comment
 
         this.courseTags = new ArrayList<>();
     }
-    public Comment(int commentId, String commentContent, int accountId, int courseId,Integer parentId, int likes, Timestamp createdAt, Timestamp updatedAt){
+    public Comment(int commentId, String commentContent, int accountId, int courseId,Integer parentId,  Timestamp createdAt, Timestamp updatedAt){
 
         this.commentId = commentId;
         this.commentContent = commentContent;
@@ -59,7 +56,6 @@ public class Comment
         this.courseId=courseId;
         this.accountId=accountId;
         parentCommentId=parentId;
-        this.likes =likes;
         this.updatedAt=updatedAt;
         this.createdAt=createdAt;
         this.courseRating = -1;
@@ -75,10 +71,7 @@ public class Comment
     {
         return commentId;
     }
-    public int getLikes()
-    {
-        return likes;
-    }
+
     public int getCourseId()
     {
         return courseId;

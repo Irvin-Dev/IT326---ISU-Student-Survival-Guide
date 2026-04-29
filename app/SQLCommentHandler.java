@@ -31,8 +31,8 @@ public boolean create(Comment comment) {
 
 
     String sql = "INSERT INTO commentinfo "
-               + "(courseid, accountid, commentcontent, createdat, updatedat, likes, parentcommentid) "
-               + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+               + "(courseid, accountid, commentcontent, createdat, updatedat,  parentcommentid) "
+               + "VALUES (?, ?, ?, ?, ?, ?)";
 
     try (Connection conn = open();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -49,8 +49,7 @@ public boolean create(Comment comment) {
         stmt.setTimestamp(4, now); // createdAt
         stmt.setTimestamp(5, now); // updatedAt
 
-        // Likes default to 0
-        stmt.setInt(6, comment.getLikes());
+  
 
         // Nullable parentCommentId
         if (comment.getParentCommentId() == null) {
@@ -98,7 +97,7 @@ public boolean create(Comment comment) {
 @Override
 public Comment getById(int id) {
     String sql = "SELECT commentid, courseid, accountid, parentcommentid, "
-               + "commentcontent, likes, createdat, updatedat "
+               + "commentcontent, createdat, updatedat "
                + "FROM commentinfo WHERE commentid = ?";
 
     try (Connection conn = open();
@@ -119,7 +118,7 @@ public Comment getById(int id) {
                 rs.getInt("accountid"),
                 rs.getInt("courseid"),
                 parentId,
-                rs.getInt("likes"),
+    
                 rs.getTimestamp("createdat"),
                 rs.getTimestamp("updatedat")
             );
@@ -171,7 +170,7 @@ public Comment getById(int id) {
 @Override
 public List<Comment> getAll() {
     String sql = "SELECT commentid, courseid, accountid, parentcommentid, "
-               + "commentcontent, likes, createdat, updatedat "
+               + "commentcontent, createdat, updatedat "
                + "FROM commentinfo";
 
     List<Comment> comments = new ArrayList<>();
@@ -194,7 +193,6 @@ public List<Comment> getAll() {
                 rs.getInt("accountid"),
                 rs.getInt("courseid"),
                 parentId,
-                rs.getInt("likes"),
                 rs.getTimestamp("createdat"),
                 rs.getTimestamp("updatedat")
             );
@@ -252,7 +250,6 @@ public boolean update(Comment comment) {
     String sql = "UPDATE commentinfo SET "
                + "commentcontent = ?, "
                + "updatedat = ?, "
-               + "likes = ?, "
                + "parentcommentid = ? "
                + "WHERE commentid = ?";
 
@@ -261,7 +258,7 @@ public boolean update(Comment comment) {
 
         stmt.setString(1, comment.getCommentContent());
         stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-        stmt.setInt(3, comment.getLikes());
+
 
         if (comment.getParentCommentId() == null) {
             stmt.setNull(4, Types.INTEGER);
