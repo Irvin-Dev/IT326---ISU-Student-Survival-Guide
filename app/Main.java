@@ -1,9 +1,11 @@
 package app;
 
-import java.sql.DriverManager;
+import java.sql.*;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
 
         DBConnection connection = new SQLConnection(
@@ -12,173 +14,185 @@ public class Main {
                 "pink22"
         );
 
-        System.out.println("Drivers loaded: " + DriverManager.getDrivers());
-
         DBCRUDHandler<Account> accountHandler = new SQLAccountHandler(connection);
         DBCRUDHandler<Course> courseHandler = new SQLCourseHandler(connection);
         DBCRUDHandler<Comment> commentHandler = new SQLCommentHandler(connection);
 
-        try {
+        Scanner scanner = new Scanner(System.in);
 
-            // ============================================================
-            //  ACCOUNT TESTS
-            // ============================================================
-            System.out.println("\n=== TESTING ACCOUNT HANDLER ===");
+        System.out.println("Drivers loaded: " + DriverManager.getDrivers());
+        System.out.println("=== Welcome to Course Review System ===");
 
-            Account acc1 = new Account(0, "julia", "julia@example.com", "password123", 2, true, true, "CS");
-            Account acc2 = new Account(0, "mike", "mike@example.com", "pass98765", 1, true, false, "IT");
+        while (true) {
+            System.out.println("\nChoose an option:");
+            System.out.println("1. Create Account");
+            System.out.println("2. Create Course");
+            System.out.println("3. Create Comment");
+            System.out.println("4. View All Accounts");
+            System.out.println("5. View All Courses");
+            System.out.println("6. View All Comments");
+            System.out.println("7. Update Comment");
+            System.out.println("8. Delete Comment");
+            System.out.println("9. Exit");
+            System.out.print("Enter choice: ");
 
-            accountHandler.create(acc1);
-            accountHandler.create(acc2);
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
 
-            System.out.println("Inserted Accounts.");
+            try {
+                switch (choice) {
 
-            Account fetchedAcc1 = accountHandler.getById(0);
-            System.out.println("Fetched Account 0: " + fetchedAcc1);
+                    // ---------------------------------------------------------
+                    // CREATE ACCOUNT
+                    // ---------------------------------------------------------
+                    case 1:
+                        System.out.print("Enter username: ");
+                        String username = scanner.nextLine();
 
-            // Update email
-            fetchedAcc1.setEmail("julia_updated@example.com");
-            accountHandler.update(fetchedAcc1);
-            System.out.println("Updated Account 0 email.");
+                        System.out.print("Enter email: ");
+                        String email = scanner.nextLine();
 
-            // Get all accounts
-            List<Account> allAccounts = accountHandler.getAll();
-            System.out.println("All Accounts:");
-            allAccounts.forEach(System.out::println);
+                        System.out.print("Enter password: ");
+                        String password = scanner.nextLine();
 
-            // Delete account test
-            System.out.println("Deleting account with ID 0...");
-            accountHandler.delete(0);
+                        System.out.print("Enter year (1=freshman,2= sophomore,3= junior,4= senior): ");
+                        int year = scanner.nextInt();
 
-            System.out.println("Accounts after deletion:");
-            accountHandler.getAll().forEach(System.out::println);
+                        scanner.nextLine();
+                        System.out.print("Enter department: ");
+                        String major = scanner.nextLine();
 
+                        Account newAcc = new Account (username, email, password, year, major);
+                        System.out.println("Creating account: " + newAcc);
+                        accountHandler.create(newAcc);
+                        System.out.println("Account created.");
+                        break;
 
-            // ============================================================
-            //  COURSE TESTS
-            // ============================================================
-            System.out.println("\n=== TESTING COURSE HANDLER ===");
+                    // ---------------------------------------------------------
+                    // CREATE COURSE
+                    // ---------------------------------------------------------
+                    case 2:
+                        System.out.print("Enter course name: ");
+                        String cname = scanner.nextLine();
 
-            Course c1 = new Course("Data Structures", 0, 200, "CS");
-            Course c2 = new Course("Operating Systems", 0, 300, "CS");
+                        System.out.print("Enter course number: ");
+                        int cnum = scanner.nextInt();
 
-            courseHandler.create(c1);
-            courseHandler.create(c2);
+                        scanner.nextLine();
+                        System.out.print("Enter department: ");
+                        String dept = scanner.nextLine();
 
-            System.out.println("Inserted Courses.");
+                        Course newCourse = new Course(cname, 0, cnum, dept,-1,-1);
+                        courseHandler.create(newCourse);
+                        System.out.println("Course created.");
+                        break;
 
-            Course fetchedCourse = courseHandler.getById(0);
-            System.out.println("Fetched Course 0: " + fetchedCourse);
+                    // ---------------------------------------------------------
+                    // CREATE COMMENT
+                    // ---------------------------------------------------------
+                    case 3:
+                        System.out.print("Enter account ID: ");
+                        int accId = scanner.nextInt();
 
-            // Update course name
-            if (fetchedCourse != null) {
-                fetchedCourse.setCourseName("Advanced Data Structures");
-                courseHandler.update(fetchedCourse);
-                System.out.println("Updated Course 0 name.");
+                        System.out.print("Enter course ID: ");
+                        int courseId = scanner.nextInt();
+                
+                        scanner.nextLine();
+                        System.out.print("Enter comment text: ");
+                        String text = scanner.nextLine();
+
+                        System.out.print("Enter course rating (1-5): ");
+                        int rating = scanner.nextInt();
+
+                        System.out.print("Enter difficulty rating (1-5): ");
+                        int diff = scanner.nextInt();
+
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+                        Comment newComment = new Comment(text, accId, courseId, null, 0, timestamp, timestamp, rating, diff);
+                        commentHandler.create(newComment);
+                        System.out.println("Comment created.");
+                        break;
+
+                    // ---------------------------------------------------------
+                    // VIEW ALL ACCOUNTS
+                    // ---------------------------------------------------------
+                    case 4:
+                        List<Account> accounts = accountHandler.getAll();
+                        System.out.println("\n=== All Accounts ===");
+                        accounts.forEach(System.out::println);
+                        break;
+
+                    // ---------------------------------------------------------
+                    // VIEW ALL COURSES
+                    // ---------------------------------------------------------
+                    case 5:
+                        List<Course> courses = courseHandler.getAll();
+                        System.out.println("\n=== All Courses ===");
+                        courses.forEach(System.out::println);
+                        break;
+
+                    // ---------------------------------------------------------
+                    // VIEW ALL COMMENTS
+                    // ---------------------------------------------------------
+                    case 6:
+                        List<Comment> comments = commentHandler.getAll();
+                        System.out.println("\n=== All Comments ===");
+                        comments.forEach(System.out::println);
+                        break;
+
+                    // ---------------------------------------------------------
+                    // UPDATE COMMENT
+                    // ---------------------------------------------------------
+                    case 7:
+                        System.out.print("Enter comment ID to update: ");
+                        int cid = scanner.nextInt();
+                        scanner.nextLine();
+
+                        Comment com = commentHandler.getById(cid);
+                        if (com == null) {
+                            System.out.println("Comment not found.");
+                            break;
+                        }
+
+                        System.out.print("Enter new text: ");
+                        String newText = scanner.nextLine();
+                        com.updateContent(newText);
+
+                        System.out.print("Enter new course rating: ");
+                        com.setCourseRating(scanner.nextInt());
+
+                        System.out.print("Enter new difficulty rating: ");
+                        com.setDifficultyRating(scanner.nextInt());
+
+                        commentHandler.update(com);
+                        System.out.println("Comment updated.");
+                        break;
+
+                    // ---------------------------------------------------------
+                    // DELETE COMMENT
+                    // ---------------------------------------------------------
+                    case 8:
+                        System.out.print("Enter comment ID to delete: ");
+                        int delId = scanner.nextInt();
+                        commentHandler.delete(delId);
+                        System.out.println("Comment deleted.");
+                        break;
+
+                    // ---------------------------------------------------------
+                    // EXIT
+                    // ---------------------------------------------------------
+                    case 9:
+                        System.out.println("Goodbye!");
+                        return;
+
+                    default:
+                        System.out.println("Invalid choice.");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
             }
-
-            // Get all courses
-            List<Course> allCourses = courseHandler.getAll();
-            System.out.println("All Courses:");
-            allCourses.forEach(System.out::println);
-
-            // Delete course test
-            System.out.println("Deleting course with ID 0...");
-            courseHandler.delete(0);
-
-            System.out.println("Courses after deletion:");
-            courseHandler.getAll().forEach(System.out::println);
-
-
-            // ============================================================
-            //  COMMENT TESTS
-            // ============================================================
-            System.out.println("\n=== TESTING COMMENT HANDLER ===");
-
-            // Insert a new account + course for comment foreign keys
-            Account acc3 = new Account(0, "commenter", "c@example.com", "securepass", 1, true, true, "CS");
-            accountHandler.create(acc3);
-
-            Course c3 = new Course("Algorithms", 0, 250, "CS");
-            courseHandler.create(c3);
-
-            // Create top-level comment
-            Comment topComment = new Comment(
-                    0,
-                    "This class is amazing!",
-                    0,   // accountId
-                    0,   // courseId
-                    null,
-                    0,
-                    null,
-                    null
-            );
-
-            commentHandler.create(topComment);
-            System.out.println("Inserted top-level comment.");
-
-            // Create reply comment
-            Comment reply = new Comment(
-                    0,
-                    "I agree with you!",
-                    0,
-                    0,
-                    1,   // parentCommentId
-                    0,
-                    null,
-                    null
-            );
-
-            commentHandler.create(reply);
-            System.out.println("Inserted reply comment.");
-
-            // Fetch comment
-            Comment fetchedComment = commentHandler.getById(1);
-            System.out.println("Fetched Comment 1: " + fetchedComment);
-
-            // Update comment content
-            if (fetchedComment != null) {
-                fetchedComment.updateContent("Updated comment text.");
-                commentHandler.update(fetchedComment);
-                System.out.println("Updated Comment 1.");
-            }
-
-            // Get all comments
-            List<Comment> allComments = commentHandler.getAll();
-            System.out.println("All Comments:");
-            allComments.forEach(System.out::println);
-
-            // Delete reply
-            System.out.println("Deleting reply comment ID 2...");
-            commentHandler.delete(2);
-
-            // Delete top-level comment
-            System.out.println("Deleting top-level comment ID 1...");
-            commentHandler.delete(1);
-
-            System.out.println("Comments after deletion:");
-            commentHandler.getAll().forEach(System.out::println);
-
-
-            // ============================================================
-            //  EDGE CASE TESTS
-            // ============================================================
-            System.out.println("\n=== EDGE CASE TESTS ===");
-
-            System.out.println("Fetching non-existent account ID 999:");
-            System.out.println(accountHandler.getById(999));
-
-            System.out.println("Fetching non-existent course ID 999:");
-            System.out.println(courseHandler.getById(999));
-
-            System.out.println("Fetching non-existent comment ID 999:");
-            System.out.println(commentHandler.getById(999));
-
-            System.out.println("Attempting to delete non-existent comment ID 999:");
-            System.out.println(commentHandler.delete(999));
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

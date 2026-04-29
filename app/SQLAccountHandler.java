@@ -28,25 +28,23 @@ public class SQLAccountHandler extends DBCRUDHandler<Account> {
     @Override
     public boolean create(Account account)  {
         if(this.getById(account.getAccountId()) != null) {
-            System.out.println("Account with ID " + account.getAccountId() + " already exists.");
             return false;
         }
-        
-        String sql = "INSERT INTO account (ACCOUNTID, EMAIL, NAME, ANONYMITY, NOTIFICATIONS, DEPARTMENT, YEARVALUE, PASSWORD) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String sql = "INSERT INTO account ( EMAIL, NAME, ANONYMITY, NOTIFICATIONS, DEPARTMENT, YEARVALUE, PASSWORD) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = open();
 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                System.out.println("Creating account: " + account);
 
-            stmt.setInt(1, account.getAccountId());
-            stmt.setString(2, account.getEmail());
-            stmt.setString(3, account.getName());
-            stmt.setBoolean(4, account.isAnonymity());
-            stmt.setBoolean(5, account.isNotifications());
-            stmt.setString(6, account.getDepartment());
-            stmt.setInt(7, account.getYearValue());
-            stmt.setString(8, account.getPassword());
+   
+            stmt.setString(1, account.getEmail());
+            stmt.setString(2, account.getName());
+            stmt.setBoolean(3, account.isAnonymity());
+            stmt.setBoolean(4, account.isNotifications());
+            stmt.setString(5, account.getDepartment());
+            stmt.setInt(6, account.getYearValue());
+            stmt.setString(7, account.getPassword());
 
             stmt.executeUpdate();
             return true;

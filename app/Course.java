@@ -9,21 +9,24 @@ public class Course
     private int courseId;
     private int courseCode;
     private String department;
+    private double courseRating;
+    private double difficultyRating;
 
-    private List<ClassTag> courseTagList;
-    private List<Rating> ratingList;
+    private List<CourseTag> courseTagList;
     private List<Comment> commentList;
 
-    public Course(String courseName, int courseId, int courseCode, String department)
+    public Course(String courseName, int courseId, int courseCode, String department, double courseRating, double difficultyRating)
     {
         this.courseName = courseName;
         this.courseId = courseId;
         this.courseCode = courseCode;
         this.department = department;
+        this.courseRating = courseRating;
+        this.difficultyRating = difficultyRating;
         this.courseTagList = new ArrayList<>();
-        this.ratingList = new ArrayList<>();
         this.commentList = new ArrayList<>();
     }
+    
 
     public String getCourseName()
     {
@@ -45,20 +48,24 @@ public class Course
         return department;
     }
 
-    public List<ClassTag> getCourseTagList()
+    public List<CourseTag> getCourseTagList()
     {
         // returning an unmodifiable list using Collections so that only the add methods in appropriate classes can modify the list
         return Collections.unmodifiableList(courseTagList);
     }
 
-    public List<Rating> getRatingList()
+    public double getRatingList()
     {
-        return Collections.unmodifiableList(ratingList);
+        return courseRating;
     }
 
     public List<Comment> getCommentList()
     {
         return Collections.unmodifiableList(commentList);
+    }
+    public double getDifficultyRating()
+    {
+        return difficultyRating;
     }
 
     public void setCourseName(String courseName)
@@ -69,6 +76,11 @@ public class Course
     public void setCourseId(int courseId)
     {
         this.courseId = courseId;
+    }
+
+    public void setDifficultyRating(double difficultyRating)
+    {
+        this.difficultyRating = difficultyRating;
     }
 
     public void setCourseCode(int courseCode)
@@ -83,10 +95,10 @@ public class Course
 
     public String toString()
     {
-        return String.format("Course{courseName='%s', courseId=%d, courseCode=%d, department='%s', " + "tags=%d, ratings=%d, comments=%d}", courseName, courseId, courseCode, department, courseTagList.size(), ratingList.size(), commentList.size());
+        return String.format("Course{courseName='%s', courseId=%d, courseCode=%d, department='%s', " + "tags=%d, ratings=%.2f, comments=%d, difficultyRating=%.2f}", courseName, courseId, courseCode, department, courseTagList.size(), courseRating, commentList.size(), difficultyRating);
     }
 
-    public void updateTagList(ClassTag courseTag)
+    public void updateTagList(CourseTag courseTag)
     {
         if(courseTag == null)
         {
@@ -95,14 +107,6 @@ public class Course
         courseTagList.add(courseTag);
     }
 
-    public void updateRatings(Rating rating)
-    {
-        if(rating == null)
-        {
-            throw new IllegalArgumentException("Rating can not be null.");
-        }
-        ratingList.add(rating);
-    }
 
     public void updateComments(Comment comment)
     {
@@ -112,7 +116,7 @@ public class Course
         }
         commentList.add(comment);
     }
-
+    /*  do we need this?
     public int[] generateCourseDistribution()
     {
         // index 0 represents rating of 1, index 4 represents rating of 5
@@ -131,4 +135,5 @@ public class Course
 
         return distribution;
     }
+    */
 }

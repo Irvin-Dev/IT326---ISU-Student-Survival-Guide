@@ -40,6 +40,16 @@ public class Account {
         this.notifications = false;
         this.department = department;
     }
+     public Account(String name, String email, String password, int yearValue, String department) {
+        this.accountId = -1; // Auto-generated
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.yearValue = yearValue;
+        this.anonymity = false;
+        this.notifications = false;
+        this.department = department;
+    }
 
     // Getters
     public int getAccountId() {
