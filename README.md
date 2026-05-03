@@ -26,5 +26,7 @@ Steps:
 -> In the Spring Boot backend, make sure App Controller is connected to the same port the React application is running on
 
 
-
+Depending on React IDE
+- make sure ports are matching in both backend and frontend
+- the index.html file has root script
 
